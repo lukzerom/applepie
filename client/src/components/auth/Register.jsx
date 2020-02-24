@@ -1,12 +1,62 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState, useContext, useEffect } from 'react';
+import AlertContext from '../../context/alert/alertContext';
+import AuthContext from '../../context/auth/authContext';
 
-const Register = () => {
+const Register = props => {
+  const alertContext = useContext(AlertContext);
+  const authContext = useContext(AuthContext);
+
+  const { setAlert } = alertContext;
+
+  const { register, error, clearErrors, isAuthenticated } = authContext;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      props.history.push('/');
+    }
+
+    if (error === 'User already exist') {
+      setAlert(error, 'danger');
+      clearErrors();
+    }
+    //eslint-disable-next-line
+  }, [error, isAuthenticated, props.history]);
+
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    password: '',
+    password2: ''
+  });
+
+  const { name, email, password, password2 } = user;
+
+  const onChange = e => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const onSubmit = e => {
+    e.preventDefault();
+
+    if (name === '' || email === '' || password === '') {
+      setAlert('Please enter all fields', 'danger');
+    } else if (password !== password2) {
+      setAlert('Password do not match', 'danger');
+    } else {
+      register({
+        name,
+        email,
+        password
+      });
+    }
+  };
+
   return (
     <Fragment>
       <div className='loginWrapper'>
         <div className='box'>
           <div className='title'>Account Register</div>
-          <form>
+          <form onSubmit={onSubmit}>
             <div className='field'>
               <label className='label' htmlFor='name'>
                 Name
@@ -16,6 +66,8 @@ const Register = () => {
                 type='text'
                 placeholder='Restaurant name'
                 name='name'
+                value={name}
+                onChange={onChange}
                 required
               />
             </div>
@@ -27,6 +79,8 @@ const Register = () => {
                 className='input'
                 type='email'
                 name='email'
+                value={email}
+                onChange={onChange}
                 placeholder='Email'
                 required
               />
@@ -39,6 +93,8 @@ const Register = () => {
                 className='input'
                 type='password'
                 name='password'
+                value={password}
+                onChange={onChange}
                 minLength='6'
               />
             </div>
@@ -50,6 +106,8 @@ const Register = () => {
                 className='input'
                 type='password'
                 name='password2'
+                value={password2}
+                onChange={onChange}
                 minLength='6'
               />
             </div>
