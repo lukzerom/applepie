@@ -1,3 +1,7 @@
+.nav-name {
+  font-family: "Permanent Marker";
+  font-size: 2rem; }
+
 /*! bulma.io v0.8.0 | MIT License | github.com/jgthms/bulma */
 @keyframes spinAround {
   from {
